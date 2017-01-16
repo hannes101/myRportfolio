@@ -70,7 +70,11 @@ for(i in symbols){
   chart.Posn(Portfolio="myPortfolio", Symbol=i, Dates=paste(init.date,current.date,sep="::"),TA='add_SMA(n=10,col=4, on=1)')
   readline(prompt="Press [enter] to continue")
 }
-
+  
+# Summary Functions blotter
+tradeStats(Portfolios = "myPortfolio", Symbols = symbols, use = c("txns"),
+           tradeDef = "flat.to.flat", inclZeroDays = FALSE)
+ 
 # Join resulting positions into a data.table and calculate the 
 # difference to current prices
 
@@ -86,11 +90,13 @@ t(sapply(symbols, function(x) getPos(Portfolio="myPortfolio"
 )
 
 
-dt.PortfolioPosition[, `:=`( Initial.Value = Pos.Qty * Pos.Avg.Cost
-                             , Current.Close.Price = last(get(YahooSymbol))
-                             , Current.Value = last(get(YahooSymbol))*Pos.Qty 
-                             , Profit.Loss.Absolute = last(get(YahooSymbol))*Pos.Qty - Pos.Qty * Pos.Avg.Cost
-                             ,Profit.Loss.Relative = round((last(get(YahooSymbol))*Pos.Qty - Pos.Qty * Pos.Avg.Cost)/(Pos.Qty * Pos.Avg.Cost),4)
+dt.PortfolioPosition[, .(Pos.Qty
+                         , Pos.Avg.Cost
+                         , Initial.Value = Pos.Qty * Pos.Avg.Cost
+                         , Current.Close.Price = last(get(YahooSymbol))
+                         , Current.Value = last(get(YahooSymbol))*Pos.Qty 
+                         , P.L.Absolute = last(get(YahooSymbol))*Pos.Qty - Pos.Qty * Pos.Avg.Cost
+                         , P.L.Relative = round((last(get(YahooSymbol))*Pos.Qty - Pos.Qty * Pos.Avg.Cost)/(Pos.Qty * Pos.Avg.Cost),4)
 ), by = "YahooSymbol"]
 
 
