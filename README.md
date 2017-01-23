@@ -10,6 +10,8 @@ Additional summary commands are of course available, when using the TradeAnalyti
 This is not really a tool to really implement a portfolio management strategy, but it 
 rather is a tool to keep track of the changes in a personal portfolio and get a quick
 overview over the current positions.
+ToDo:
+- implement the possibility to keep track of savings plans, so that one can just put in the basic data of savings plans and these positions are then incorporated explicitly into the portfolio.
 
 It basically was born out of frustration on the offered possibilities of my broker's website and the shortcomings I faced, when using a spreadsheet.
 
