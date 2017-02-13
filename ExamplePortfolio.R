@@ -4,6 +4,7 @@ library(FinancialInstrument)
 library(blotter)
 library(quantmod)
 library(PerformanceAnalytics)
+library(formattable)
 
 library(data.table)
 # Read in the trade data
@@ -90,7 +91,7 @@ t(sapply(symbols, function(x) getPos(Portfolio="myPortfolio"
 )
 
 
-dt.PortfolioPosition[, .(Pos.Qty
+dt.PortfolioPosition[order(YahooSymbol) & Pos.Qty > 0, .(Pos.Qty
                          , Pos.Avg.Cost
                          , Initial.Value = Pos.Qty * Pos.Avg.Cost
                          , Current.Close.Price = last(get(YahooSymbol))
@@ -99,6 +100,23 @@ dt.PortfolioPosition[, .(Pos.Qty
                          , P.L.Relative = round((last(get(YahooSymbol))*Pos.Qty - Pos.Qty * Pos.Avg.Cost)/(Pos.Qty * Pos.Avg.Cost),4)
 ), by = "YahooSymbol"]
 
+# Output a formatted table of the data.table
+formattable(dt.PortfolioPosition[order(YahooSymbol) & Pos.Qty > 0, .(Pos.Qty
+                                     , Initial.Value = Pos.Qty * Pos.Avg.Cost
+                                     , Current.Value = last(get(YahooSymbol))*Pos.Qty 
+                                     , Initial.Price = Pos.Avg.Cost
+                                     , Current.Price = last(get(YahooSymbol))
+                                     , P.L.Absolute = last(get(YahooSymbol))*Pos.Qty - Pos.Qty * Pos.Avg.Cost
+                                     , P.L.Relative = round((last(get(YahooSymbol))*Pos.Qty - Pos.Qty * Pos.Avg.Cost)/(Pos.Qty * Pos.Avg.Cost),4)
+), by = "YahooSymbol"]
+
+, list(
+    
+       P.L.Absolute = formatter("span", 
+                           style = ~ style(color = ifelse(P.L.Absolute >= 0, "green", "red")))
+      , P.L.Relative = formatter("span", 
+                                style = ~ style(color = ifelse(P.L.Relative >= 0, "green", "red"))))
+)
 
 
 
